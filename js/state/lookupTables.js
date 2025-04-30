@@ -19,6 +19,16 @@ export const attackBonusTables = {
     }
 };
 
+export const classToAttackTableKey = {
+    cleric: "clericThiefGroup",
+    thief: "clericThiefGroup",
+    fighter: "fighterGroup",
+    dwarf: "fighterGroup",
+    halfling: "fighterGroup",
+    elf: "fighterGroup",
+    magicUser: "magicUserGroup"
+};
+
 export const savingThrowTables = {
     cleric: {
         1: { death: 11, wands: 12, paralysis: 14, breath: 16, spells: 15 },
@@ -112,6 +122,16 @@ export const savingThrowTables = {
     }
 };
 
+export const classToSavingThrowKey = {
+    cleric: "cleric",
+    magicUser: "magicUser",
+    thief: "thief",
+    fighter: "fighter",
+    dwarf: "dwarfHalfling",
+    halfling: "dwarfHalfling",
+    elf: "elf"
+};
+
 export const spellSlotTables = {
     cleric: {
         1:  {},
@@ -146,6 +166,12 @@ export const spellSlotTables = {
         13: { 1: 4, 2: 4, 3: 4, 4: 3, 5: 3, 6: 3 },
         14: { 1: 4, 2: 4, 3: 4, 4: 4, 5: 3, 6: 3 }
     }
+};
+
+export const classToSpellSlotKey = {
+    cleric: "cleric",
+    magicUser: "magicUser",
+    elf: "magicUser" // per your earlier instruction
 };
 
 export const arcaneSpells = [
