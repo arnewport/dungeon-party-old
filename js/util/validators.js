@@ -70,3 +70,16 @@ export function canAddSpellOfLevel(character, level, currentCount) {
     const allowed = slots[level] || 0;
     return currentCount < allowed;
 }
+
+/**
+ * Checks if a spell is already known (by name and level).
+ * Used to prevent duplicates in spellsKnown list.
+ * @param {Spell[]} spellsKnown
+ * @param {Spell} newSpell
+ * @returns {boolean}
+ */
+export function isSpellAlreadyKnown(spellsKnown, newSpell) {
+    return spellsKnown.some(
+        (spell) => spell.name === newSpell.name && spell.level === newSpell.level
+    );
+}
