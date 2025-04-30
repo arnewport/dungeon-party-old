@@ -2,11 +2,11 @@
 
 ## Phase 1: Core Infrastructure
 - [x] Create partyState.js with Party and Characters array
-- [ ] Create lookupTables.js with:
+- [x] Create lookupTables.js with:
   - [x] Attack bonus tables
   - [x] Saving throw tables
-  - [ ] Spell slot progression
-  - [ ] Arcane and divine spell lists
+  - [x] Spell slot tables
+  - [x] Arcane and divine spell lists
 - [ ] Create calculations.js (derived stats: AC, bonuses, saving throws)
 - [ ] Create diceRoller.js (d20 and damage rolls)
 - [ ] Create validators.js (inventory/spell slot enforcement)

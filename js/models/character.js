@@ -23,6 +23,7 @@
  * @property {ArcaneSpellcasting=} arcane
  * @property {DivineSpellcasting=} divine
  * @property {string|null} activeWeaponId
+ * @property {"melee"|"ranged"|null} activeWeaponMode
  */
 
 /**
@@ -71,6 +72,7 @@ export function createCharacter(name, charClass) {
         },
         arcane: undefined,
         divine: undefined,
-        activeWeaponId: null
+        activeWeaponId: null,
+        activeWeaponMode: null
     };
 }
