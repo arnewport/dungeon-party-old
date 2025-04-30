@@ -8,10 +8,10 @@
   - [x] Spell slot tables
   - [x] Arcane and divine spell lists
 - [x] Create calculations.js (derived stats: AC, bonuses, saving throws)
-- [ ] Create diceRoller.js (d20 and damage rolls)
-- [ ] Create validators.js (inventory/spell slot enforcement)
-- [ ] Create storage.js (save/load JSON)
-- [ ] Create errors.js (basic error display)
+- [x] Create diceRoller.js (d20 and damage rolls)
+- [x] Create validators.js (inventory/spell slot enforcement)
+- [x] Create storage.js (save/load JSON)
+- [x] Create errors.js (basic error display)
 
 ## Phase 2: Statistics Microapp
 - [ ] Render list of characters with editable base stats
