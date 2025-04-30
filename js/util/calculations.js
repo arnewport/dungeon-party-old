@@ -13,6 +13,7 @@ import {
  * @returns {number}
  */
 export function getAbilityModifier(score) {
+    if (score === null) return 0;
     if (score >= 18) return 3;
     if (score >= 16) return 2;
     if (score >= 13) return 1;
@@ -54,7 +55,7 @@ export function calculateMaxHitPoints(character) {
 export function calculateArmorClass(character) {
     let ac = 10;
 
-    const armor = character.equippedItems.find(i => i.type === "armor");
+    const armor = character.equippedItems.armor;
     if (armor) {
         if (armor.armorType === "leather") ac += 2;
         else if (armor.armorType === "chain") ac += 4;
@@ -62,7 +63,7 @@ export function calculateArmorClass(character) {
         ac += armor.magicBonus || 0;
     }
 
-    const shield = character.equippedItems.find(i => i.type === "shield");
+    const shield = character.equippedItems.shield;
     if (shield) {
         ac += 1;
         ac += shield.magicBonus || 0;
@@ -72,10 +73,8 @@ export function calculateArmorClass(character) {
 
     ac += character.specialArmorClassBonus || 0;
 
-    for (const item of character.equippedItems) {
-        if (item.type === "jewelry") {
-            ac += item.armorBonus || 0;
-        }
+    for (const item of character.equippedItems.jewelry || []) {
+        ac += item.armorBonus || 0;
     }
 
     return ac;
@@ -95,10 +94,8 @@ export function calculateSavingThrows(character) {
     const wisdomBonus = getAbilityModifier(character.wisdom);
 
     let jewelryBonus = 0;
-    for (const item of character.equippedItems) {
-        if (item.type === "jewelry") {
-            jewelryBonus += item.savingThrowBonus || 0;
-        }
+    for (const item of character.equippedItems.jewelry || []) {
+        jewelryBonus += item.savingThrowBonus || 0;
     }
 
     const bonuses = {
