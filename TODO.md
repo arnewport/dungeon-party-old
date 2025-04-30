@@ -7,7 +7,7 @@
   - [x] Saving throw tables
   - [x] Spell slot tables
   - [x] Arcane and divine spell lists
-- [ ] Create calculations.js (derived stats: AC, bonuses, saving throws)
+- [x] Create calculations.js (derived stats: AC, bonuses, saving throws)
 - [ ] Create diceRoller.js (d20 and damage rolls)
 - [ ] Create validators.js (inventory/spell slot enforcement)
 - [ ] Create storage.js (save/load JSON)
