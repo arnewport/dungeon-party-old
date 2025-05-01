@@ -10,6 +10,7 @@ import {
 } from "../util/calculations.js";
 import { createCharacter } from "../models/character.js";
 
+window.partyState = partyState;
 let activeTab = "combat";
 const editableHpIds = new Set();
 const confirmingDeleteIds = new Set();
@@ -23,7 +24,6 @@ export function renderStatisticsView() {
     renderTabs(container);
 
     // Tab button UI (optional)
-
 
     // Build column set
     let columns = [...generalColumns];
@@ -91,7 +91,7 @@ function createAddCharacterRow() {
     }
 
     if (activeTab === "abilities") {
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 6; i++) {
             row.appendChild(document.createElement("td"));
         }
     }
@@ -112,6 +112,7 @@ function createAddCharacterRow() {
         newChar.alignment = alignment;
 
         partyState.characters.push(newChar);
+        handleSaveAll();
         renderStatisticsView();
     };
 
@@ -154,6 +155,16 @@ function createTableHeader(columns) {
     for (const col of columns) {
         const th = document.createElement("th");
         th.textContent = col;
+
+        // column width
+        if (col === "Name") th.style.width = "10rem";
+        else if (col === "Class") th.style.width = "8rem";
+        else if (col === "Level") th.style.width = "4rem";
+        else if (col === "Alignment") th.style.width = "6rem";
+
+        // column height
+        th.style.height = "2.5rem";
+
         header.appendChild(th);
     }
 
@@ -162,7 +173,7 @@ function createTableHeader(columns) {
 }
 
 const generalColumns = ["Name", "Class", "Level", "Alignment"];
-const combatColumns = ["Current HP", "Max HP", "Armor Class", "Atk Bonus", "Melee Bonus", "Ranged Bonus"];
+const combatColumns = ["Current HP", "Max HP", "Armor Class", "Attack Bonus", "Melee Bonus", "Ranged Bonus"];
 const saveColumnMap = [
     { label: "Death", key: "death" },
     { label: "Wands", key: "wands" },
@@ -172,18 +183,12 @@ const saveColumnMap = [
 ];
 const saveColumns = saveColumnMap.map(col => col.label);
 const abilityColumnMap = [
-    { label: "STR", key: "strength" },
-    { label: "STR Mod", key: "strength" },
-    { label: "INT", key: "intelligence" },
-    { label: "INT Mod", key: "intelligence" },
-    { label: "WIS", key: "wisdom" },
-    { label: "WIS Mod", key: "wisdom" },
-    { label: "DEX", key: "dexterity" },
-    { label: "DEX Mod", key: "dexterity" },
-    { label: "CON", key: "constitution" },
-    { label: "CON Mod", key: "constitution" },
-    { label: "CHA", key: "charisma" },
-    { label: "CHA Mod", key: "charisma" }
+    { label: "Strength", key: "strength" },
+    { label: "Intelligence", key: "intelligence" },
+    { label: "Wisdom", key: "wisdom" },
+    { label: "Dexterity", key: "dexterity" },
+    { label: "Constitution", key: "constitution" },
+    { label: "Charisma", key: "charisma" },
 ];
 const abilityColumns = abilityColumnMap.map(col => col.label);
 
@@ -209,16 +214,17 @@ function renderTabs(container) {
 function renderGeneralRow(character) {
     const row = document.createElement("tr");
 
-    row.appendChild(createCell(character.name));
-    row.appendChild(createCell(character.class));
-    row.appendChild(createCell(character.level));
-    row.appendChild(createCell(character.alignment));
+    row.appendChild(createEditableInputCell(character.name, character.id, "name", "text"));
+    row.appendChild(createEditableInputCell(character.class, character.id, "class", "text"));
+    row.appendChild(createEditableInputCell(character.level, character.id, "level", "number"));
+    row.appendChild(createEditableInputCell(character.alignment, character.id, "alignment", "text"));
 
     if (activeTab === "combat") {
         row.appendChild(createEditableInputCell(
             character.currentHitPoints,
             character.id,
-            "currentHitPoints"
+            "currentHitPoints",
+            "number"
         ));
         row.appendChild(createMaxHpCell(character));
         row.appendChild(createCell(calculateArmorClass(character)));
@@ -236,12 +242,26 @@ function renderGeneralRow(character) {
 
     if (activeTab === "abilities") {
         for (const stat of ["strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"]) {
-            row.appendChild(createEditableInputCell(
-                character[stat],
-                character.id,
-                stat
-            ));
-            row.appendChild(createCell(getAbilityModifier(character[stat])));
+            const td = document.createElement("td");
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.className = "form-control form-control-sm d-inline-block";
+            input.value = character[stat];
+            input.dataset.charId = character.id;
+            input.dataset.field = stat;
+            input.style.width = "4rem";
+            input.style.display = "inline-block";
+            input.style.marginRight = "0.5rem";
+
+            const modSpan = document.createElement("span");
+            const mod = getAbilityModifier(character[stat]);
+            modSpan.textContent = `(${mod >= 0 ? "+" : ""}${mod})`;
+            modSpan.style.opacity = "0.6";
+
+            td.appendChild(input);
+            td.appendChild(modSpan);
+            row.appendChild(td);
         }
     }
 
@@ -328,10 +348,10 @@ function createCell(content) {
     return td;
 }
 
-function createEditableInputCell(value, charId, fieldName) {
+function createEditableInputCell(value, charId, fieldName, type) {
     const td = document.createElement("td");
     const input = document.createElement("input");
-    input.type = "number";
+    input.type = type;
     input.className = "form-control form-control-sm";
     input.value = value;
     input.dataset.charId = charId;

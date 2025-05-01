@@ -10,7 +10,7 @@
 /**
  * @type {Party}
  */
-export const partyState = {
+export let partyState = {
     characters: [],
     limbo: [],
     storage: []
