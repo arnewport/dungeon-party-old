@@ -10,6 +10,7 @@ import {
 } from "../util/calculations.js";
 import { createCharacter } from "../models/character.js";
 
+let activeTab = "combat";
 const editableHpIds = new Set();
 const confirmingDeleteIds = new Set();
 
@@ -19,21 +20,30 @@ const confirmingDeleteIds = new Set();
 export function renderStatisticsView() {
     const container = document.getElementById("statistics-section");
     container.innerHTML = "";
+    renderTabs(container);
+
+    // Tab button UI (optional)
+
+
+    // Build column set
+    let columns = [...generalColumns];
+    if (activeTab === "combat") {
+        columns.push(...combatColumns);
+    } else if (activeTab === "saves") {
+        columns.push(...saveColumns);
+    } else if (activeTab === "abilities") {
+        columns.push(...abilityColumns);
+    }
 
     const table = document.createElement("table");
     table.className = "table table-striped table-bordered table-sm";
 
-    const thead = createTableHeader();
+    const thead = createTableHeader(columns);
     const tbody = document.createElement("tbody");
 
     for (const character of partyState.characters) {
-        const generalRow = renderGeneralRow(character);
-        const savesRow = renderSavesRow(character);
-        const abilitiesRow = renderAbilitiesRow(character);
-
-        tbody.appendChild(generalRow);
-        tbody.appendChild(savesRow);
-        tbody.appendChild(abilitiesRow);
+        const row = renderGeneralRow(character); // this must respect activeTab
+        tbody.appendChild(row);
     }
 
     table.appendChild(thead);
@@ -68,13 +78,23 @@ function createAddCharacterRow() {
     row.appendChild(levelInput.td);
     row.appendChild(alignmentInput.td);
 
-    const empty = () => {
-        const td = document.createElement("td");
-        td.colSpan = 6;
-        return td;
-    };
+    if (activeTab === "combat") {
+        for (let i = 0; i < 6; i++) {
+            row.appendChild(document.createElement("td"));
+        }
+    }
 
-    row.appendChild(empty());
+    if (activeTab === "saves") {
+        for (let i = 0; i < 5; i++) {
+            row.appendChild(document.createElement("td"));
+        }
+    }
+
+    if (activeTab === "abilities") {
+        for (let i = 0; i < 12; i++) {
+            row.appendChild(document.createElement("td"));
+        }
+    }
 
     const addBtn = document.createElement("button");
     addBtn.textContent = "Add Character";
@@ -88,6 +108,9 @@ function createAddCharacterRow() {
         if (!name || !charClass || isNaN(level)) return;
 
         const newChar = createCharacter(name, charClass);
+        newChar.level = level;
+        newChar.alignment = alignment;
+
         partyState.characters.push(newChar);
         renderStatisticsView();
     };
@@ -124,15 +147,9 @@ function createAddSelect(name, options) {
     return { td, input: select };
 }
 
-function createTableHeader() {
+function createTableHeader(columns) {
     const thead = document.createElement("thead");
     const header = document.createElement("tr");
-
-    const columns = [
-        "Name", "Class", "Level", "Alignment",
-        "Current HP", "Max HP", "Armor Class",
-        "Atk Bonus", "Melee Bonus", "Ranged Bonus"
-    ];
 
     for (const col of columns) {
         const th = document.createElement("th");
@@ -144,6 +161,51 @@ function createTableHeader() {
     return thead;
 }
 
+const generalColumns = ["Name", "Class", "Level", "Alignment"];
+const combatColumns = ["Current HP", "Max HP", "Armor Class", "Atk Bonus", "Melee Bonus", "Ranged Bonus"];
+const saveColumnMap = [
+    { label: "Death", key: "death" },
+    { label: "Wands", key: "wands" },
+    { label: "Paralysis", key: "paralysis" },
+    { label: "Breath", key: "breath" },
+    { label: "Spells", key: "spells" }
+];
+const saveColumns = saveColumnMap.map(col => col.label);
+const abilityColumnMap = [
+    { label: "STR", key: "strength" },
+    { label: "STR Mod", key: "strength" },
+    { label: "INT", key: "intelligence" },
+    { label: "INT Mod", key: "intelligence" },
+    { label: "WIS", key: "wisdom" },
+    { label: "WIS Mod", key: "wisdom" },
+    { label: "DEX", key: "dexterity" },
+    { label: "DEX Mod", key: "dexterity" },
+    { label: "CON", key: "constitution" },
+    { label: "CON Mod", key: "constitution" },
+    { label: "CHA", key: "charisma" },
+    { label: "CHA Mod", key: "charisma" }
+];
+const abilityColumns = abilityColumnMap.map(col => col.label);
+
+function renderTabs(container) {
+    const tabs = ["combat", "saves", "abilities"];
+    const tabRow = document.createElement("div");
+    tabRow.className = "mb-3";
+
+    for (const tab of tabs) {
+        const button = document.createElement("button");
+        button.textContent = tab.charAt(0).toUpperCase() + tab.slice(1);
+        button.className = `btn btn-sm me-2 ${activeTab === tab ? "btn-primary" : "btn-outline-primary"}`;
+        button.onclick = () => {
+            activeTab = tab;
+            renderStatisticsView();
+        };
+        tabRow.appendChild(button);
+    }
+
+    container.appendChild(tabRow);
+}
+
 function renderGeneralRow(character) {
     const row = document.createElement("tr");
 
@@ -152,17 +214,37 @@ function renderGeneralRow(character) {
     row.appendChild(createCell(character.level));
     row.appendChild(createCell(character.alignment));
 
-    row.appendChild(createEditableInputCell(
-        character.currentHitPoints,
-        character.id,
-        "currentHitPoints"
-    ));
+    if (activeTab === "combat") {
+        row.appendChild(createEditableInputCell(
+            character.currentHitPoints,
+            character.id,
+            "currentHitPoints"
+        ));
+        row.appendChild(createMaxHpCell(character));
+        row.appendChild(createCell(calculateArmorClass(character)));
+        row.appendChild(createCell(getBaseAttackBonus(character)));
+        row.appendChild(createCell(getMeleeAttackBonus(character)));
+        row.appendChild(createCell(getRangedAttackBonus(character)));
+    }
 
-    row.appendChild(createMaxHpCell(character));
-    row.appendChild(createCell(calculateArmorClass(character)));
-    row.appendChild(createCell(getBaseAttackBonus(character)));
-    row.appendChild(createCell(getMeleeAttackBonus(character)));
-    row.appendChild(createCell(getRangedAttackBonus(character)));
+    if (activeTab === "saves") {
+        const saves = calculateSavingThrows(character);
+        for (const { key } of saveColumnMap) {
+            row.appendChild(createCell(saves[key].total));
+        }
+    }
+
+    if (activeTab === "abilities") {
+        for (const stat of ["strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"]) {
+            row.appendChild(createEditableInputCell(
+                character[stat],
+                character.id,
+                stat
+            ));
+            row.appendChild(createCell(getAbilityModifier(character[stat])));
+        }
+    }
+
     row.appendChild(createDeleteCell(character));
 
     return row;
@@ -238,35 +320,6 @@ function createDeleteCell(character) {
     }
 
     return td;
-}
-
-function renderSavesRow(character) {
-    const row = document.createElement("tr");
-    const saves = calculateSavingThrows(character);
-
-    row.appendChild(createCell(character.name));
-
-    for (const type of ["death", "wands", "paralysis", "breath", "spells"]) {
-        row.appendChild(createCell(saves[type].total));
-    }
-
-    return row;
-}
-
-function renderAbilitiesRow(character) {
-    const row = document.createElement("tr");
-    row.appendChild(createCell(character.name));
-
-    for (const stat of ["strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"]) {
-        row.appendChild(createEditableInputCell(
-            character[stat],
-            character.id,
-            stat
-        ));
-        row.appendChild(createCell(getAbilityModifier(character[stat])));
-    }
-
-    return row;
 }
 
 function createCell(content) {
