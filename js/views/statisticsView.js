@@ -71,7 +71,9 @@ function createAddCharacterRow() {
         "dwarf", "elf", "halfling"
     ]);
     const levelInput = createAddInput("level", "number");
-    const alignmentInput = createAddInput("alignment");
+    const alignmentInput = createAddSelect("alignment", [
+        "lawful", "neutral", "chaotic"
+    ]);
 
     row.appendChild(nameInput.td);
     row.appendChild(classInput.td);
@@ -137,15 +139,35 @@ function createAddSelect(name, options) {
     const select = document.createElement("select");
     select.className = "form-select form-select-sm";
 
-    for (const value of options) {
-        const opt = document.createElement("option");
-        opt.value = value;
-        opt.textContent = value;
-        select.appendChild(opt);
+    for (const optVal of options) {
+        const option = document.createElement("option");
+        option.value = optVal;
+        option.textContent = optVal.charAt(0).toUpperCase() + optVal.slice(1);
+        select.appendChild(option);
     }
 
     td.appendChild(select);
     return { td, input: select };
+}
+
+function createEditableSelectCell(value, charId, fieldName, options) {
+    const td = document.createElement("td");
+    const select = document.createElement("select");
+    select.className = "form-select form-select-sm";
+
+    select.dataset.charId = charId;
+    select.dataset.field = fieldName;
+
+    for (const optVal of options) {
+        const option = document.createElement("option");
+        option.value = optVal;
+        option.textContent = optVal.charAt(0).toUpperCase() + optVal.slice(1);
+        if (optVal === value) option.selected = true;
+        select.appendChild(option);
+    }
+
+    td.appendChild(select);
+    return td;
 }
 
 function createTableHeader(columns) {
@@ -160,7 +182,9 @@ function createTableHeader(columns) {
         if (col === "Name") th.style.width = "10rem";
         else if (col === "Class") th.style.width = "8rem";
         else if (col === "Level") th.style.width = "4rem";
-        else if (col === "Alignment") th.style.width = "6rem";
+        else if (col === "Alignment") th.style.width = "8rem";
+        else if (col === "Current HP") th.style.width = "6rem";
+        else if (col === "Max HP") th.style.width = "6rem";
 
         // column height
         th.style.height = "2.5rem";
@@ -215,9 +239,13 @@ function renderGeneralRow(character) {
     const row = document.createElement("tr");
 
     row.appendChild(createEditableInputCell(character.name, character.id, "name", "text"));
-    row.appendChild(createEditableInputCell(character.class, character.id, "class", "text"));
+    row.appendChild(createEditableSelectCell(character.class, character.id, "class", [
+        "cleric", "fighter", "magicUser", "thief", "dwarf", "elf", "halfling"
+    ]));
     row.appendChild(createEditableInputCell(character.level, character.id, "level", "number"));
-    row.appendChild(createEditableInputCell(character.alignment, character.id, "alignment", "text"));
+    row.appendChild(createEditableSelectCell(character.alignment, character.id, "alignment", [
+        "lawful", "neutral", "chaotic"
+    ]));
 
     if (activeTab === "combat") {
         row.appendChild(createEditableInputCell(
@@ -274,6 +302,7 @@ function createMaxHpCell(character) {
     const td = document.createElement("td");
 
     if (editableHpIds.has(character.id)) {
+        // Show editable input and a "−" close button
         const input = document.createElement("input");
         input.type = "number";
         input.value = character.rolledHitPoints;
@@ -292,14 +321,20 @@ function createMaxHpCell(character) {
         td.appendChild(input);
         td.appendChild(closeBtn);
     } else {
+        // Show calculated max HP and a "+" button to reveal the input
         const display = document.createElement("span");
         display.textContent = calculateMaxHitPoints(character).toString();
-        display.classList.add("clickable");
-        display.onclick = () => {
+
+        const openBtn = document.createElement("button");
+        openBtn.textContent = "+";
+        openBtn.className = "btn btn-sm btn-outline-secondary ms-2";
+        openBtn.onclick = () => {
             editableHpIds.add(character.id);
             renderStatisticsView();
         };
+
         td.appendChild(display);
+        td.appendChild(openBtn);
     }
 
     return td;
@@ -329,7 +364,7 @@ function createDeleteCell(character) {
         td.appendChild(cancelBtn);
     } else {
         const deleteBtn = document.createElement("button");
-        deleteBtn.className = "btn btn-sm btn-outline-danger";
+        deleteBtn.className = "btn btn-sm btn-danger";
         deleteBtn.textContent = "Delete";
         deleteBtn.onclick = () => {
             confirmingDeleteIds.add(character.id);
@@ -348,7 +383,7 @@ function createCell(content) {
     return td;
 }
 
-function createEditableInputCell(value, charId, fieldName, type) {
+function createEditableInputCell(value, charId, fieldName, type = "text") {
     const td = document.createElement("td");
     const input = document.createElement("input");
     input.type = type;
