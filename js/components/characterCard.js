@@ -1,4 +1,5 @@
 import {
+    getAbilityModifier,
     calculateMaxHitPoints,
     calculateArmorClass,
     calculateSavingThrows,
@@ -9,6 +10,12 @@ import {
 import { characterClasses } from '../state/lookupTables.js';
 
 export function characterCard(character) {
+    const isNotNegative = (value) => {
+        if (value > -1) {
+            return `+${value}`
+        }
+    }
+
     return {
         character,
         characterClasses,
@@ -17,11 +24,9 @@ export function characterCard(character) {
         get row2() {
             return {
                 "HP": `${character.currentHitPoints} / ${calculateMaxHitPoints(character)}`,
-                "Hit Dice": `d${character.rolledHitPoints}`,
-                "Attack Bonus": getBaseAttackBonus(character),
-                "Melee Attack": getMeleeAttackBonus(character),
-                "Ranged Attack": getRangedAttackBonus(character),
-                "Unused": "-"
+                "Attack Bonus": isNotNegative(getBaseAttackBonus(character)),
+                "Melee Attack": isNotNegative(getMeleeAttackBonus(character)),
+                "Ranged Attack": isNotNegative(getRangedAttackBonus(character)),
             };
         },
 
@@ -29,22 +34,22 @@ export function characterCard(character) {
             const saves = calculateSavingThrows(character);
             return {
                 "Armor Class": calculateArmorClass(character),
-                "Death": saves.death,
-                "Wands": saves.wands,
-                "Paralysis": saves.paralysis,
-                "Breath": saves.breath,
-                "Spells": saves.spells
+                "Death Save": saves.death.total,
+                "Wands Save": saves.wands.total,
+                "Paralysis Save": saves.paralysis.total,
+                "Breath Save": saves.breath.total,
+                "Spells Save": saves.spells.total
             };
         },
 
         get row4() {
             return {
-                "STR": character.strength,
-                "INT": character.intelligence,
-                "WIS": character.wisdom,
-                "DEX": character.dexterity,
-                "CON": character.constitution,
-                "CHA": character.charisma
+                "Strength": `${character.strength} (${isNotNegative(getAbilityModifier(character.strength))})`,
+                "Intelligence": `${character.intelligence} (${isNotNegative(getAbilityModifier(character.intelligence))})`,
+                "Wisdom": `${character.wisdom} (${isNotNegative(getAbilityModifier(character.wisdom))})`,
+                "Dexterity": `${character.dexterity} (${isNotNegative(getAbilityModifier(character.dexterity))})`,
+                "Constitution": `${character.constitution} (${isNotNegative(getAbilityModifier(character.constitution))})`,
+                "Charisma": `${character.charisma} (${isNotNegative(getAbilityModifier(character.charisma))})`
             };
         },
 
