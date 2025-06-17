@@ -5,7 +5,7 @@
  * @property {string} type
  * @property {string=} url
  * @property {{ type: string, id: string }} location
- * @property {string=} weaponType
+ * @property {("melee"|"ranged")[]=} weaponType
  * @property {number=} magicBonus
  * @property {number=} damageDie
  * @property {string=} armorType

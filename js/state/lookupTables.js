@@ -1,3 +1,13 @@
+export const characterClasses = [
+    "cleric",
+    "fighter",
+    "magicUser",
+    "thief",
+    "dwarf",
+    "elf",
+    "halfling"
+]
+
 export const attackBonusTables = {
     fighterGroup: {
         1: 0, 2: 0, 3: 0,

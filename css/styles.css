@@ -43,3 +43,10 @@ input[type="number"] {
     font-size: 0.9rem;
     padding: 0.25rem;
 }
+
+/* grid sizing */
+
+.grid-template-columns-6 {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
