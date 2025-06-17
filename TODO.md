@@ -11,14 +11,13 @@
 - [x] Create diceRoller.js (d20 and damage rolls)
 - [x] Create validators.js (inventory/spell slot enforcement)
 - [x] Create storage.js (save/load JSON)
-- [x] Create errors.js (basic error display)
 
 ## Phase 2: Statistics Microapp
-- [ ] Render list of characters with editable base stats
-- [ ] Show derived stats (read-only)
-- [ ] Add Save/Update button to recalculate stats
-- [ ] Add character creation form
-- [ ] Add character deletion
+- [x] Render list of characters with editable base stats
+- [x] Show derived stats (read-only)
+- [x] Add Save/Update button to recalculate stats
+- [x] Add character creation form
+- [x] Add character deletion
 
 ## Phase 3: Items Microapp
 - [ ] Render item containers (characters, limbo, storage)

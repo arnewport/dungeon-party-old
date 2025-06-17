@@ -10,10 +10,11 @@ import {
 } from "../util/calculations.js";
 import { createCharacter } from "../models/character.js";
 
-window.partyState = partyState;
-let activeTab = "combat";
-const editableHpIds = new Set();
-const confirmingDeleteIds = new Set();
+// TODO: PENDING DELETION
+// window.partyState = partyState;
+// let activeTab = "combat";
+// const editableHpIds = new Set();
+// const confirmingDeleteIds = new Set();
 
 /**
  * Main entry point to render the statistics view.
