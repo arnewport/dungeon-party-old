@@ -1,6 +1,32 @@
 import { getSpellSlots } from "./calculations.js";
 
 /**
+ * Validates a character object and returns per-field errors.
+ * @param {Character} character
+ * @returns {{ [field: string]: string }} error messages by field
+ */
+export function validateCharacter(character) {
+    const errors = {};
+
+    // Placeholder validations — replace these later
+    if (!character.name || character.name.trim() === "") {
+        errors.name = "Name is required.";
+    }
+
+    if (character.level < 1) {
+        errors.level = "Level must be at least 1.";
+    }
+
+    if (character.rolledHitPoints < 1) {
+        errors.rolledHitPoints = "Rolled HP must be at least 1.";
+    }
+
+    // etc. – Add more validations here when ready
+
+    return errors;
+}
+
+/**
  * Checks if a character can carry another item (max 10).
  * @param {Character} character
  * @returns {boolean}

@@ -29,8 +29,8 @@ export function getAbilityModifier(score) {
  * @returns {number}
  */
 export function calculateMaxHitPoints(character) {
-    const conBonus = getAbilityModifier(character.constitution);
-    const baseHp = character.rolledHitPoints;
+    const conBonus = Number(getAbilityModifier(character.constitution));
+    const baseHp = Number(character.rolledHitPoints);
 
     const cappedLevel = Math.min(character.level, 9);
     const bonusLevels = Math.max(character.level - 9, 0);

@@ -21,6 +21,7 @@ export function characterCard(character) {
         characterClasses,
         editing: false,
 
+
         get row2() {
             return {
                 "HP": `${character.currentHitPoints} / ${calculateMaxHitPoints(character)}`,
@@ -55,6 +56,7 @@ export function characterCard(character) {
 
         activate() { character.active = true },
         deactivate() { character.active = false },
+        // TODO: add validation to saving
         save() { this.editing = false }
     };
 }

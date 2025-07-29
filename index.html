@@ -21,64 +21,131 @@
         <div x-data="{ characters: [] }" x-init="$nextTick(() => { characters = window.partyState.characters })">
             <template x-for="character in characters" :key="character.id">
                 <div class="card p-3 mb-3" x-data="characterCard(character)">
-                    <!-- Row 1: Name, Class, Level, Alignment -->
-                    <div class="d-flex flex-wrap mb-2">
-                        <div class="me-3 mb-2">
-                            <label class="form-label me-1">Name:</label>
-                            <span x-show="!editing" x-text="character.name" class="fw-bold"></span>
-                            <input x-show="editing" x-model="character.name" class="form-control form-control-sm" />
-                        </div>
-                        <div class="me-3 mb-2">
-                            <label class="form-label me-1">Class:</label>
 
-                            <span x-show="!editing" x-text="character.class" class="fw-bold"></span>
+                    <!-- Display Mode -->
+                    <div x-show="!editing">
+                        <!-- Row 1: Name, Class, Level, Alignment -->
+                        <div class="d-flex flex-wrap mb-2">
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Name:</label>
+                                <span class="fw-bold" x-text="character.name"></span>
+                            </div>
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Class:</label>
+                                <span class="fw-bold" x-text="character.class"></span>
+                            </div>
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Level:</label>
+                                <span x-text="character.level"></span>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label me-1">Alignment:</label>
+                                <span x-text="character.alignment"></span>
+                            </div>
+                        </div>
 
-                            <select x-show="editing" x-model="character.class" class="form-select form-select-sm">
-                                <template x-for="cls in characterClasses" :key="cls">
-                                    <option :value="cls" x-text="cls"></option>
-                                </template>
-                            </select>
+                        <!-- Row 2: Hit Points, Attack Bonuses -->
+                        <div class="d-grid grid-template-columns-6 mb-2">
+                            <template x-for="(stat, label) in row2">
+                                <div class="d-flex flex-column align-items-start text-truncate pe-2">
+                                    <label class="form-label fw-bold small text-muted" x-text="label"></label>
+                                    <span x-text="stat"></span>
+                                </div>
+                            </template>
                         </div>
-                        <div class="me-3 mb-2">
-                            <label class="form-label me-1">Level:</label>
-                            <span x-show="!editing" x-text="character.level"></span>
-                            <input x-show="editing" type="number" x-model="character.level" class="form-control form-control-sm" />
+
+                        <!-- Row 3: Armor Class, Saving Throws -->
+                        <div class="d-grid grid-template-columns-6 mb-2">
+                            <template x-for="(stat, label) in row3">
+                                <div class="d-flex flex-column align-items-start text-truncate pe-2">
+                                    <label class="form-label fw-bold small text-muted" x-text="label"></label>
+                                    <span x-text="stat"></span>
+                                </div>
+                            </template>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label me-1">Alignment:</label>
-                            <span x-show="!editing" x-text="character.alignment"></span>
-                            <input x-show="editing" x-model="character.alignment" class="form-control form-control-sm" />
+
+                        <!-- Row 4: Ability Scores -->
+                        <div class="d-grid grid-template-columns-6 mb-3">
+                            <template x-for="(stat, label) in row4">
+                                <div class="d-flex flex-column align-items-start text-truncate pe-2">
+                                    <label class="form-label fw-bold small text-muted" x-text="label"></label>
+                                    <span x-text="stat"></span>
+                                </div>
+                            </template>
                         </div>
                     </div>
 
-                    <!-- Row 2: Hit Points, Attack Bonuses -->
-                    <div class="d-grid grid-template-columns-6 mb-2">
-                        <template x-for="(stat, label) in row2">
-                            <div class="d-flex flex-column align-items-start text-truncate pe-2">
-                                <label class="form-label fw-bold small text-muted" x-text="label"></label>
-                                <span x-text="stat"></span>
+                    <!-- Edit Mode -->
+                    <!--- TODO: add inline errors or centralized error box -->
+                    <div x-show="editing">
+                        <!-- Row 1: Name, Class, Level, Alignment -->
+                        <div class="d-flex flex-wrap mb-2">
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Name:</label>
+                                <input class="form-control form-control-sm" x-model="character.name" />
                             </div>
-                        </template>
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Class:</label>
+                                <select class="form-select form-select-sm" x-model="character.class">
+                                    <template x-for="cls in characterClasses" :key="cls">
+                                        <option :value="cls" x-text="cls" :selected="cls === character.class"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Level:</label>
+                                <input type="number" class="form-control form-control-sm" x-model="character.level" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label me-1">Alignment:</label>
+                                <select class="form-select form-select-sm" x-model="character.alignment">
+                                    <option value="Lawful">Lawful</option>
+                                    <option value="Neutral">Neutral</option>
+                                    <option value="Chaotic">Chaotic</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Hit Points, Attack Bonuses -->
+                        <div class="d-flex flex-wrap mb-2">
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Current HP:</label>
+                                <input type="number" class="form-control form-control-sm" x-model="character.currentHitPoints" />
+                            </div>
+                            <div class="me-3 mb-2">
+                                <label class="form-label me-1">Rolled HP:</label>
+                                <input type="number" class="form-control form-control-sm" x-model="character.rolledHitPoints" />
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Armor Class, Saving Throws -->
+                        <!-- N/A -->
+
+                        <!-- Row 4: Ability Scores -->
+                        <div class="d-grid grid-template-columns-6 mb-3">
+                            <template x-for="(ability, label) in {
+                              'STR': 'strength',
+                              'INT': 'intelligence',
+                              'WIS': 'wisdom',
+                              'DEX': 'dexterity',
+                              'CON': 'constitution',
+                              'CHA': 'charisma'
+                            }">
+                                <div class="d-flex flex-column align-items-start text-truncate pe-2">
+                                    <label class="form-label fw-bold small text-muted" x-text="label"></label>
+                                    <input type="number" class="form-control form-control-sm" x-model="character[ability]" />
+                                </div>
+                            </template>
+                        </div>
                     </div>
 
-                    <!-- Row 3: Armor Class, Saving Throws -->
-                    <div class="d-grid grid-template-columns-6 mb-2">
-                        <template x-for="(stat, label) in row3">
-                            <div class="d-flex flex-column align-items-start text-truncate pe-2">
-                                <label class="form-label fw-bold small text-muted" x-text="label"></label>
-                                <span x-text="stat"></span>
-                            </div>
-                        </template>
-                    </div>
+                    <!-- Buttons, for real-->
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <!-- Show "Edit" button in view mode -->
+                        <button class="btn btn-primary btn-sm" x-show="!editing" @click="editing = true">Edit</button>
 
-                    <!-- Row 4: Ability Scores -->
-                    <div class="d-grid grid-template-columns-6 mb-3">
-                        <template x-for="(stat, label) in row4">
-                            <div class="d-flex flex-column align-items-start text-truncate pe-2">
-                                <label class="form-label fw-bold small text-muted" x-text="label"></label>
-                                <span x-text="stat"></span>
-                            </div>
-                        </template>
+                        <!-- Show "Save" and optionally "Cancel" in edit mode -->
+                        <button class="btn btn-success btn-sm" x-show="editing" @click="save()">View</button>
                     </div>
 
                     <!-- Buttons -->
