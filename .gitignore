@@ -5,3 +5,16 @@
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Build
+build/
+dist/
+.vite/
+
+# Local
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
