@@ -15,15 +15,12 @@
  * @property {number} charisma
  * @property {number} specialArmorClassBonus
  * @property {Item[]} items
- * @property {Object} equippedItems
- * @property {Item|null} equippedItems.armor
- * @property {Item|null} equippedItems.shield
- * @property {Item[]} equippedItems.jewelry
- * @property {Item[]} equippedItems.weapons
- * @property {ArcaneSpellcasting=} arcane
- * @property {DivineSpellcasting=} divine
+ * @property {Item|null} equippedArmor
+ * @property {Item|null} equippedShield
  * @property {string|null} activeWeaponId
  * @property {"melee"|"ranged"|null} activeWeaponMode
+ * @property {ArcaneSpellcasting=} arcane
+ * @property {DivineSpellcasting=} divine
  */
 
 /**
@@ -64,15 +61,11 @@ export function createCharacter(name, charClass) {
         constitution: 10,
         charisma: 10,
         items: [],
-        equippedItems: {
-            armor: null,
-            shield: null,
-            jewelry: [],
-            weapons: []
-        },
-        arcane: undefined,
-        divine: undefined,
+        equippedArmor: null,
+        equippedShield: null,
         activeWeaponId: null,
-        activeWeaponMode: null
+        activeWeaponMode: null,
+        arcane: undefined,
+        divine: undefined
     };
 }

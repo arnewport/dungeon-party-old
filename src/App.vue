@@ -3,9 +3,6 @@
 </script>
 
 <template>
-
+  <div class="nav-bar"></div>
+  <div class="character-card"></div>
 </template>
-
-<style scoped>
-
-</style>

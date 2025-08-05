@@ -4,6 +4,7 @@
  * @typedef {Object} Party
  * @property {Character[]} characters
  * @property {Item[]} limbo
+ * @property {Item[]} party
  * @property {Item[]} storage
  */
 
@@ -13,5 +14,6 @@
 export let partyState = {
     characters: [],
     limbo: [],
+    party: [],
     storage: []
 };
